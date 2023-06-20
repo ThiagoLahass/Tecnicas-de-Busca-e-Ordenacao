@@ -8,8 +8,13 @@ struct arv{
     int chave;
     struct arv* esquerda;
     struct arv* direita;
+    int tamanho;
 };
 
+static int size(Arv * n) { 
+    if (n == NULL) { return 0;} 
+    else { return n->tamanho;}
+}
 
 Arv *arvore_cria_vazia(){
     return NULL;
@@ -21,12 +26,35 @@ Arv *arvore_insere_chave_na_folha(Arv *a, int chave){
         a->chave = chave;
         a->direita = NULL;
         a->esquerda = NULL;
+        a->tamanho = 1;
     }
     else if( chave < a->chave ){
         a->esquerda = arvore_insere_chave_na_folha(a->esquerda, chave);
     }
     else if( chave > a->chave ){
         a->direita = arvore_insere_chave_na_folha(a->direita, chave);
+    }
+
+    a->tamanho = size(a->esquerda) + size(a->direita) + 1;
+
+    return a;
+}
+
+Arv *arvore_insere_chave_na_raiz(Arv *a, int chave){
+    if(a == NULL){
+        a = (Arv*) calloc(1, sizeof(Arv));
+        a->chave = chave;
+        a->direita = NULL;
+        a->esquerda = NULL;
+        a->tamanho = 1;
+    }
+    else if( chave < a->chave ){
+        a->esquerda = arvore_insere_chave_na_raiz(a->esquerda, chave);
+        a = rotate_right(a);
+    }
+    else if( chave > a->chave ){
+        a->direita = arvore_insere_chave_na_raiz(a->direita, chave);
+        a = rotate_left(a);
     }
 
     return a;
@@ -44,7 +72,7 @@ Arv* arvore_libera(Arv *a){
 void arvore_imprime( Arv* a) {
     printf("<");
     if( a != NULL ) {
-        printf("%d", a->chave);
+        printf("%d : size %d", a->chave, a->tamanho);
         arvore_imprime(a->esquerda);
         arvore_imprime(a->direita);
     }
@@ -214,5 +242,22 @@ void arvore_nao_rec_caminhamento_por_niveis( Arv* arv, void (*visit)(Arv*) ){
             fila_insere(fila, current->direita );
         }
     }
+}
+//=========================================================================================
+
+
+//=========================== ROTATES FUNCTIONS ===========================================
+Arv* rotate_right(Arv* a){
+    Arv* t = a->esquerda;
+    a->esquerda = t->direita;
+    t->direita = a;
+    return t;
+}
+
+Arv* rotate_left(Arv* a){
+    Arv* t = a->direita;
+    a->direita = t->esquerda;
+    t->esquerda = a;
+    return t;
 }
 //=========================================================================================

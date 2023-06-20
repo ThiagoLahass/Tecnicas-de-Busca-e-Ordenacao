@@ -12,7 +12,7 @@ int main( int argc, char* argv[] ){
     srand(time(NULL));
     for( int i = 0; i < N; i++ ){
         int chave = rand();
-        a = arvore_insere_chave(a, chave);
+        a = arvore_insere_chave_na_folha(a, chave);
     }
 
     // arvore_imprime(a);
